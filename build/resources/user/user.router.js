@@ -9,7 +9,7 @@ var _express = require("express");
 
 var _auth = require("../../utils/auth");
 
-var _user = require("./user.controller");
+var _user = require("./user.controllers");
 
 // /user
 const userRouter = (0, _express.Router)();

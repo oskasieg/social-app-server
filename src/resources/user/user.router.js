@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { protect } from '../../utils/auth';
-import { signUp, signIn, getProfile, editProfile } from './user.controller';
+import { signUp, signIn, getProfile, editProfile } from './user.controllers';
 
 // /user
 const userRouter = Router();

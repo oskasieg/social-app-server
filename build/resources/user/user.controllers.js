@@ -132,7 +132,8 @@ const editProfile = async (req, res) => {
       message: "User isn't exist!"
     });
   }
-};
+}; // methods
+
 
 exports.editProfile = editProfile;
 

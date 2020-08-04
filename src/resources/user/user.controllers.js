@@ -83,6 +83,7 @@ export const editProfile = async (req, res) => {
   }
 };
 
+// methods
 export const updateLikes = async (type, login) => {
   try {
     const user = await User.findOne({ login });
