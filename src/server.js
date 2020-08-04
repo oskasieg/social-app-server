@@ -19,14 +19,14 @@ app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-app.use(postRouter);
-app.use(userRouter);
+app.use('/post', postRouter);
+app.use('/user', userRouter);
 
 const start = async () => {
   try {
     await connect();
     app.listen(config.port, () => {
-      console.log(`Server is running on: ${config.port}.`);
+      console.log(`Server is running on: ${config.port}.\n`);
     });
   } catch (e) {
     console.error(e);

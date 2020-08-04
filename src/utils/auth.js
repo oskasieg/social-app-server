@@ -1,6 +1,5 @@
 import config from '../config';
 import jwt from 'jsonwebtoken';
-import { User } from '../resources/user/user.model';
 
 export const newToken = (user) => {
   return jwt.sign({ id: user._id }, config.secrets.jwt, { expiresIn: config.secrets.jwtExp });
@@ -18,12 +17,26 @@ export const verifyToken = (token) => {
   });
 };
 
-export const signUp = async (req, res) => {
+export const protect = async (req, res, next) => {
+  if (!req.headers.authorization) {
+    return res.status(400).json({ message: 'No authorization token!' });
+  }
+
+  const token = req.headers.authorization.split(' ')[1];
+
+  if (!token) {
+    return res.status(400).json({ message: 'No token!' });
+  }
+
   try {
-    await User.create(req.body);
-    res.status(200).json({ message: 'You have created a new account!' });
+    const payload = await verifyToken(token);
+
+    if (!payload) {
+      return res.status(400).json({ message: 'No valid token!' });
+    }
+
+    next();
   } catch (e) {
-    console.log(e);
-    res.status(400).json('Error while creating a new account!');
+    console.error(e);
   }
 };

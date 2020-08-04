@@ -20,7 +20,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 const connect = (url = _config.default.dbUrl, opts = {}) => {
   return _mongoose.default.connect(url, _objectSpread(_objectSpread({}, opts), {}, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    useCreateIndex: true
   }));
 };
 

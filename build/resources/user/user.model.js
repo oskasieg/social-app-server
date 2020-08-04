@@ -44,7 +44,8 @@ const userSchema = new _mongoose.default.Schema({
   },
   followers: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   avatar: {
     type: String,
@@ -53,19 +54,22 @@ const userSchema = new _mongoose.default.Schema({
   },
   likes: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   numberOfPosts: {
     type: Number,
-    required: true
+    required: true,
+    default: 0
   },
   createdAt: {
     type: Date,
-    required: true
+    required: true,
+    default: new Date()
   },
   lastLogin: {
     type: Date,
-    required: true
+    default: new Date()
   }
 });
 userSchema.pre('save', function (next) {

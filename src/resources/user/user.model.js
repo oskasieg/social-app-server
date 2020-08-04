@@ -35,6 +35,7 @@ const userSchema = new mongoose.Schema({
   followers: {
     type: Number,
     required: true,
+    default: 0,
   },
   avatar: {
     type: String,
@@ -44,18 +45,21 @@ const userSchema = new mongoose.Schema({
   likes: {
     type: Number,
     required: true,
+    default: 0,
   },
   numberOfPosts: {
     type: Number,
     required: true,
+    default: 0,
   },
   createdAt: {
     type: Date,
     required: true,
+    default: new Date(),
   },
   lastLogin: {
     type: Date,
-    required: true,
+    default: new Date(),
   },
 });
 

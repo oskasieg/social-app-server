@@ -31,14 +31,14 @@ app.use((0, _bodyParser.urlencoded)({
   extended: true
 }));
 app.use((0, _morgan.default)('dev'));
-app.use(_post.default);
-app.use(_user.default);
+app.use('/post', _post.default);
+app.use('/user', _user.default);
 
 const start = async () => {
   try {
     await (0, _db.default)();
     app.listen(_config.default.port, () => {
-      console.log(`Server is running on: ${_config.default.port}.`);
+      console.log(`Server is running on: ${_config.default.port}.\n`);
     });
   } catch (e) {
     console.error(e);

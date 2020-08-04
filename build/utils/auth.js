@@ -3,13 +3,11 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.signUp = exports.verifyToken = exports.newToken = void 0;
+exports.protect = exports.verifyToken = exports.newToken = void 0;
 
 var _config = _interopRequireDefault(require("../config"));
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
-
-var _user = require("../resources/user/user.model");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -37,16 +35,34 @@ const verifyToken = token => {
 
 exports.verifyToken = verifyToken;
 
-const signUp = async (req, res) => {
-  try {
-    await _user.User.create(req.body);
-    res.status(200).json({
-      message: 'You have created a new account!'
+const protect = async (req, res, next) => {
+  if (!req.headers.authorization) {
+    return res.status(400).json({
+      message: 'No authorization token!'
     });
+  }
+
+  const token = req.headers.authorization.split(' ')[1];
+
+  if (!token) {
+    return res.status(400).json({
+      message: 'No token!'
+    });
+  }
+
+  try {
+    const payload = await verifyToken(token);
+
+    if (!payload) {
+      return res.status(400).json({
+        message: 'No valid token!'
+      });
+    }
+
+    next();
   } catch (e) {
-    console.log(e);
-    res.status(400).json('Error while creating a new account!');
+    console.error(e);
   }
 };
 
-exports.signUp = signUp;
+exports.protect = protect;
