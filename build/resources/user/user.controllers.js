@@ -29,14 +29,16 @@ const signUp = async (req, res) => {
       numberOfPosts: 0
     });
 
+    const token = (0, _auth.newToken)(user);
     await _user.User.create(user);
     res.status(200).json({
-      message: 'You have created an account!'
+      user: user,
+      token: token
     });
   } catch (e) {
     console.log(e);
-    res.status(400).json({
-      message: 'User already exists!'
+    res.status(500).json({
+      message: 'Error while creating account!'
     });
   }
 };

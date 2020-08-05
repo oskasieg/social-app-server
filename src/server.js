@@ -9,6 +9,7 @@ import connect from './utils/db';
 
 import postRouter from './resources/post/post.router';
 import userRouter from './resources/user/user.router';
+import interestRouter from './resources/interest/interest.router';
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(morgan('dev'));
 
 app.use('/post', postRouter);
 app.use('/user', userRouter);
+app.use('/interests', interestRouter);
 
 const start = async () => {
   try {

@@ -9,11 +9,13 @@ export const signUp = async (req, res) => {
   try {
     const user = { ...req.body, followers: 0, likes: 0, numberOfPosts: 0 };
 
+    const token = newToken(user);
+
     await User.create(user);
-    res.status(200).json({ message: 'You have created an account!' });
+    res.status(200).json({ user: user, token: token });
   } catch (e) {
     console.log(e);
-    res.status(400).json({ message: 'User already exists!' });
+    res.status(500).json({ message: 'Error while creating account!' });
   }
 };
 

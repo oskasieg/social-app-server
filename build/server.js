@@ -21,6 +21,8 @@ var _post = _interopRequireDefault(require("./resources/post/post.router"));
 
 var _user = _interopRequireDefault(require("./resources/user/user.router"));
 
+var _interest = _interopRequireDefault(require("./resources/interest/interest.router"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const app = (0, _express.default)();
@@ -33,6 +35,7 @@ app.use((0, _bodyParser.urlencoded)({
 app.use((0, _morgan.default)('dev'));
 app.use('/post', _post.default);
 app.use('/user', _user.default);
+app.use('/interests', _interest.default);
 
 const start = async () => {
   try {
