@@ -70,7 +70,7 @@ userSchema.pre('save', function (next) {
 
   bcrypt.hash(this.password, 8, (err, hash) => {
     if (err) {
-      return next(error);
+      return next(err);
     }
 
     this.password = hash;

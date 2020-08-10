@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+//zainteresowania recznie dodane do mongoDB!
+
 const interestSchema = new mongoose.Schema({
   name: {
     type: String,

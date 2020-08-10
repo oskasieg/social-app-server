@@ -11,6 +11,8 @@ var _auth = require("../../utils/auth");
 
 var _user = require("./user.controllers");
 
+var _files = require("../../utils/files");
+
 // /user
 const userRouter = (0, _express.Router)();
 userRouter.use((req, res, next) => {
@@ -26,11 +28,11 @@ userRouter.route('/').put((req, res) => {
   (0, _user.signIn)(req, res);
 }); // get profile
 
-userRouter.route('/profile').get(_auth.protect, (req, res) => {
+userRouter.route('/profile').put(_auth.protect, (req, res) => {
   (0, _user.getProfile)(req, res);
 }); // edit profile
 
-userRouter.route('/profile').put(_auth.protect, (req, res) => {
+userRouter.route('/profile/edit').put(_auth.protect, _files.upload.single('avatar'), (req, res) => {
   (0, _user.editProfile)(req, res);
 });
 var _default = userRouter;

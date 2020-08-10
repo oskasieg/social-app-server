@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { protect } from '../../utils/auth';
 import { signUp, signIn, getProfile, editProfile } from './user.controllers';
+import { upload } from '../../utils/files';
 
 // /user
 const userRouter = Router();
@@ -21,12 +22,12 @@ userRouter.route('/').put((req, res) => {
 });
 
 // get profile
-userRouter.route('/profile').get(protect, (req, res) => {
+userRouter.route('/profile').put(protect, (req, res) => {
   getProfile(req, res);
 });
 
 // edit profile
-userRouter.route('/profile').put(protect, (req, res) => {
+userRouter.route('/profile/edit').put(protect, upload.single('avatar'), (req, res) => {
   editProfile(req, res);
 });
 

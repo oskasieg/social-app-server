@@ -1,5 +1,6 @@
 import { User } from './user.model';
 import { newToken } from '../../utils/auth';
+import bcrypt from 'bcrypt';
 
 export const signUp = async (req, res) => {
   if (!req.body.login || !req.body.firstName || !req.body.lastName || !req.body.password || !req.body.interests || !req.body.age) {
@@ -7,7 +8,7 @@ export const signUp = async (req, res) => {
   }
 
   try {
-    const user = { ...req.body, followers: 0, likes: 0, numberOfPosts: 0 };
+    const user = { ...req.body, followers: 0, likes: 0, numberOfPosts: 0, lastLogin: new Date(), createdAt: new Date(), avatar: 'img' };
 
     const token = newToken(user);
 
@@ -53,7 +54,7 @@ export const getProfile = async (req, res) => {
   try {
     const user = await User.findOne({ login: req.body.login });
 
-    res.status(200).json({ user });
+    res.status(200).json(user);
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "User isn't exist!" });
@@ -61,7 +62,18 @@ export const getProfile = async (req, res) => {
 };
 
 export const editProfile = async (req, res) => {
-  if (
+  // zmiana avatara
+  if (req.file && req.body.login) {
+    try {
+      const user = await User.findOne({ login: req.body.login });
+
+      const url = `http://localhost:8000/${req.file.filename}`;
+      await user.updateOne({ avatar: url });
+    } catch (e) {
+      console.error(e);
+    }
+    ///////////////////////////////////////////////////
+  } else if (
     !req.body.login ||
     !req.body.firstName ||
     !req.body.lastName ||
@@ -71,17 +83,27 @@ export const editProfile = async (req, res) => {
     !req.body.avatar
   ) {
     return res.status(400).json({ message: 'No valid number of keys in req.body!' });
-  }
+  } else {
+    try {
+      const user = await User.findOne({ login: req.body.login });
 
-  try {
-    const user = await User.findOne({ login: req.body.login });
-    await user.updateOne(req.body);
+      const hashPassword = await new Promise((resolve, reject) => {
+        bcrypt.hash(req.body.password, 8, function (err, hash) {
+          if (err) reject(err);
+          resolve(hash);
+        });
+      });
 
-    updateLikes('increment', req.body.login);
+      await user.updateOne({
+        ...req.body,
+        interests: req.body.interests,
+        password: hashPassword,
+      });
 
-    res.status(200).json({ user: req.body });
-  } catch (e) {
-    res.status(500).json({ message: "User isn't exist!" });
+      res.status(200).json({ ...req.body, interests: req.body.interests, password: hashPassword });
+    } catch (e) {
+      res.status(500).json({ message: 'Server error!' });
+    }
   }
 };
 

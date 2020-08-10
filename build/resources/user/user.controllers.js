@@ -9,6 +9,10 @@ var _user = require("./user.model");
 
 var _auth = require("../../utils/auth");
 
+var _bcrypt = _interopRequireDefault(require("bcrypt"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -26,7 +30,10 @@ const signUp = async (req, res) => {
     const user = _objectSpread(_objectSpread({}, req.body), {}, {
       followers: 0,
       likes: 0,
-      numberOfPosts: 0
+      numberOfPosts: 0,
+      lastLogin: new Date(),
+      createdAt: new Date(),
+      avatar: 'img'
     });
 
     const token = (0, _auth.newToken)(user);
@@ -100,9 +107,7 @@ const getProfile = async (req, res) => {
     const user = await _user.User.findOne({
       login: req.body.login
     });
-    res.status(200).json({
-      user
-    });
+    res.status(200).json(user);
   } catch (e) {
     console.error(e);
     res.status(500).json({
@@ -114,25 +119,48 @@ const getProfile = async (req, res) => {
 exports.getProfile = getProfile;
 
 const editProfile = async (req, res) => {
-  if (!req.body.login || !req.body.firstName || !req.body.lastName || !req.body.password || !req.body.interests || !req.body.age || !req.body.avatar) {
+  // zmiana avatara
+  if (req.file && req.body.login) {
+    try {
+      const user = await _user.User.findOne({
+        login: req.body.login
+      });
+      const url = `http://localhost:8000/${req.file.filename}`;
+      await user.updateOne({
+        avatar: url
+      });
+    } catch (e) {
+      console.error(e);
+    } ///////////////////////////////////////////////////
+
+  } else if (!req.body.login || !req.body.firstName || !req.body.lastName || !req.body.password || !req.body.interests || !req.body.age || !req.body.avatar) {
     return res.status(400).json({
       message: 'No valid number of keys in req.body!'
     });
-  }
-
-  try {
-    const user = await _user.User.findOne({
-      login: req.body.login
-    });
-    await user.updateOne(req.body);
-    updateLikes('increment', req.body.login);
-    res.status(200).json({
-      user: req.body
-    });
-  } catch (e) {
-    res.status(500).json({
-      message: "User isn't exist!"
-    });
+  } else {
+    try {
+      const user = await _user.User.findOne({
+        login: req.body.login
+      });
+      const hashPassword = await new Promise((resolve, reject) => {
+        _bcrypt.default.hash(req.body.password, 8, function (err, hash) {
+          if (err) reject(err);
+          resolve(hash);
+        });
+      });
+      await user.updateOne(_objectSpread(_objectSpread({}, req.body), {}, {
+        interests: req.body.interests,
+        password: hashPassword
+      }));
+      res.status(200).json(_objectSpread(_objectSpread({}, req.body), {}, {
+        interests: req.body.interests,
+        password: hashPassword
+      }));
+    } catch (e) {
+      res.status(500).json({
+        message: 'Server error!'
+      });
+    }
   }
 }; // methods
 

@@ -36,6 +36,7 @@ app.use((0, _morgan.default)('dev'));
 app.use('/post', _post.default);
 app.use('/user', _user.default);
 app.use('/interests', _interest.default);
+app.use(_express.default.static(`${__dirname}/../public/avatars`));
 
 const start = async () => {
   try {
