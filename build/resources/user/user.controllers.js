@@ -32,8 +32,7 @@ const signUp = async (req, res) => {
       likes: 0,
       numberOfPosts: 0,
       lastLogin: new Date(),
-      createdAt: new Date(),
-      avatar: 'img'
+      createdAt: new Date()
     });
 
     const token = (0, _auth.newToken)(user);
@@ -64,7 +63,7 @@ const signIn = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json({
+    return res.status(401).json({
       message: 'No user in database!'
     });
   }
@@ -73,7 +72,7 @@ const signIn = async (req, res) => {
     const match = await user.checkPassword(req.body.password);
 
     if (!match) {
-      return res.status(400).json({
+      return res.status(402).json({
         message: 'Invalid password!'
       });
     }
@@ -119,7 +118,6 @@ const getProfile = async (req, res) => {
 exports.getProfile = getProfile;
 
 const editProfile = async (req, res) => {
-  // zmiana avatara
   if (req.file && req.body.login) {
     try {
       const user = await _user.User.findOne({
@@ -131,8 +129,7 @@ const editProfile = async (req, res) => {
       });
     } catch (e) {
       console.error(e);
-    } ///////////////////////////////////////////////////
-
+    }
   } else if (!req.body.login || !req.body.firstName || !req.body.lastName || !req.body.password || !req.body.interests || !req.body.age || !req.body.avatar) {
     return res.status(400).json({
       message: 'No valid number of keys in req.body!'

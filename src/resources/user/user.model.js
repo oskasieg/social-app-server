@@ -7,18 +7,24 @@ const userSchema = new mongoose.Schema({
     unique: true,
     required: true,
     trim: true,
-    minlength: 5,
-    maxlength: 16,
+    minlength: 3,
+    maxlength: 20,
   },
   firstName: {
     type: String,
     required: true,
+    minlength: 3,
+    maxlength: 20,
   },
   lastName: {
+    minlength: 3,
+    maxlength: 30,
     type: String,
     required: true,
   },
   password: {
+    minlength: 8,
+    maxlength: 16,
     type: String,
     required: true,
   },
@@ -29,6 +35,7 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   interests: {
+    minlength: 1,
     type: Array,
     required: true,
   },
@@ -39,8 +46,6 @@ const userSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    required: true,
-    default: 'imgUrl',
   },
   likes: {
     type: Number,

@@ -2,7 +2,7 @@ import { Post } from './post.model';
 import { sortByDate } from '../../utils/sort';
 
 export const addPost = async (req, res) => {
-  if (!req.body.authorLogin || !req.body.title || !req.body.text || !req.body.photos) {
+  if (!req.body.authorLogin || !req.body.title || !req.body.text) {
     return res.status(400).json({ message: 'No valid number of keys in req.body!' });
   }
 
@@ -33,7 +33,7 @@ export const getManyPosts = async (req, res) => {
 
     const reducedPosts = posts.slice(0, req.body.numberOfPosts);
 
-    res.status(200).json({ posts: reducedPosts });
+    res.status(200).json(reducedPosts);
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: 'Error while getting many posts!' });
@@ -69,7 +69,7 @@ export const updatePost = async (req, res) => {
       return res.status(400).json({ message: 'No post with this title!' });
     }
 
-    await post.updateOne({ ...req.body, editedAt: new Date() });
+    await post.updateOne({ ...req.body, editedAt: new Date() }, { new: false });
 
     res.status(200).json({ post: req.body });
   } catch (e) {

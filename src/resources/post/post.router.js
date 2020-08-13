@@ -16,7 +16,7 @@ postRouter.route('/').post(protect, (req, res) => {
 });
 
 // get many posts
-postRouter.route('/').get((req, res) => {
+postRouter.route('/').put((req, res) => {
   getManyPosts(req, res);
 });
 

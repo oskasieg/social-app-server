@@ -8,7 +8,7 @@ export const signUp = async (req, res) => {
   }
 
   try {
-    const user = { ...req.body, followers: 0, likes: 0, numberOfPosts: 0, lastLogin: new Date(), createdAt: new Date(), avatar: 'img' };
+    const user = { ...req.body, followers: 0, likes: 0, numberOfPosts: 0, lastLogin: new Date(), createdAt: new Date() };
 
     const token = newToken(user);
 
@@ -27,13 +27,13 @@ export const signIn = async (req, res) => {
 
   const user = await User.findOne({ login: req.body.login });
   if (!user) {
-    return res.status(400).json({ message: 'No user in database!' });
+    return res.status(401).json({ message: 'No user in database!' });
   }
 
   try {
     const match = await user.checkPassword(req.body.password);
     if (!match) {
-      return res.status(400).json({ message: 'Invalid password!' });
+      return res.status(402).json({ message: 'Invalid password!' });
     }
 
     await user.updateOne({ lastLogin: new Date() });
@@ -62,7 +62,6 @@ export const getProfile = async (req, res) => {
 };
 
 export const editProfile = async (req, res) => {
-  // zmiana avatara
   if (req.file && req.body.login) {
     try {
       const user = await User.findOne({ login: req.body.login });
@@ -72,7 +71,6 @@ export const editProfile = async (req, res) => {
     } catch (e) {
       console.error(e);
     }
-    ///////////////////////////////////////////////////
   } else if (
     !req.body.login ||
     !req.body.firstName ||

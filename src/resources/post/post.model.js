@@ -17,16 +17,27 @@ const postShema = new mongoose.Schema({
   },
   photos: {
     type: Array,
-    required: true,
   },
-  likes: {
-    type: Number,
+  likes: [
+    {
+      kind: String,
+      author: String,
+      avatar: String,
+    },
+  ],
+  sumLikes: {
+    type: String,
     default: 0,
     required: true,
   },
-  comments: {
-    type: Array,
-  },
+  comments: [
+    {
+      text: String,
+      author: String,
+      avatar: String,
+      date: Date,
+    },
+  ],
   createdAt: {
     type: Date,
     default: new Date(),

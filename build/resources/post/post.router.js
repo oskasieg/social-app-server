@@ -22,7 +22,7 @@ postRouter.route('/').post(_auth.protect, (req, res) => {
   (0, _post.addPost)(req, res);
 }); // get many posts
 
-postRouter.route('/').get((req, res) => {
+postRouter.route('/').put((req, res) => {
   (0, _post.getManyPosts)(req, res);
 }); // get by name
 

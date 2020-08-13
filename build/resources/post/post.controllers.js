@@ -16,7 +16,7 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 const addPost = async (req, res) => {
-  if (!req.body.authorLogin || !req.body.title || !req.body.text || !req.body.photos) {
+  if (!req.body.authorLogin || !req.body.title || !req.body.text) {
     return res.status(400).json({
       message: 'No valid number of keys in req.body!'
     });
@@ -58,9 +58,7 @@ const getManyPosts = async (req, res) => {
     const posts = await _post.Post.find();
     (0, _sort.sortByDate)(posts, 'dec');
     const reducedPosts = posts.slice(0, req.body.numberOfPosts);
-    res.status(200).json({
-      posts: reducedPosts
-    });
+    res.status(200).json(reducedPosts);
   } catch (e) {
     console.error(e);
     res.status(500).json({
@@ -120,7 +118,9 @@ const updatePost = async (req, res) => {
 
     await post.updateOne(_objectSpread(_objectSpread({}, req.body), {}, {
       editedAt: new Date()
-    }));
+    }), {
+      new: false
+    });
     res.status(200).json({
       post: req.body
     });

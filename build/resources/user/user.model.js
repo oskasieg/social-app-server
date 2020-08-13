@@ -17,18 +17,24 @@ const userSchema = new _mongoose.default.Schema({
     unique: true,
     required: true,
     trim: true,
-    minlength: 5,
-    maxlength: 16
+    minlength: 3,
+    maxlength: 20
   },
   firstName: {
     type: String,
-    required: true
+    required: true,
+    minlength: 3,
+    maxlength: 20
   },
   lastName: {
+    minlength: 3,
+    maxlength: 30,
     type: String,
     required: true
   },
   password: {
+    minlength: 8,
+    maxlength: 16,
     type: String,
     required: true
   },
@@ -39,6 +45,7 @@ const userSchema = new _mongoose.default.Schema({
     required: true
   },
   interests: {
+    minlength: 1,
     type: Array,
     required: true
   },
@@ -48,9 +55,7 @@ const userSchema = new _mongoose.default.Schema({
     default: 0
   },
   avatar: {
-    type: String,
-    required: true,
-    default: 'imgUrl'
+    type: String
   },
   likes: {
     type: Number,
