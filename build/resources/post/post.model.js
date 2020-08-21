@@ -9,7 +9,7 @@ var _mongoose = _interopRequireDefault(require("mongoose"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const postShema = new _mongoose.default.Schema({
+const postSchema = new _mongoose.default.Schema({
   authorLogin: {
     type: String,
     required: true
@@ -18,14 +18,28 @@ const postShema = new _mongoose.default.Schema({
     type: String,
     required: true,
     unique: true,
-    lowercase: true
+    lowercase: true,
+    min: 5,
+    max: 20
   },
   text: {
     type: String,
+    min: 10,
+    max: 200,
     required: true
   },
   photos: {
     type: Array
+  },
+  comments: [{
+    text: String,
+    author: String,
+    avatar: String,
+    createdAt: Date
+  }],
+  tags: {
+    type: Array,
+    required: true
   },
   likes: [{
     kind: String,
@@ -33,19 +47,12 @@ const postShema = new _mongoose.default.Schema({
     avatar: String
   }],
   sumLikes: {
-    type: String,
+    type: Number,
     default: 0,
     required: true
   },
-  comments: [{
-    text: String,
-    author: String,
-    avatar: String,
-    date: Date
-  }],
   createdAt: {
     type: Date,
-    default: new Date(),
     required: true
   },
   editedAt: {
@@ -53,6 +60,6 @@ const postShema = new _mongoose.default.Schema({
   }
 });
 
-const Post = _mongoose.default.model('post', postShema);
+const Post = _mongoose.default.model('post', postSchema);
 
 exports.Post = Post;

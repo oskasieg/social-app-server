@@ -30,6 +30,10 @@ userRouter.route('/').put((req, res) => {
 
 userRouter.route('/profile').put(_auth.protect, (req, res) => {
   (0, _user.getProfile)(req, res);
+}); // get other profile
+
+userRouter.route('/profile/:login').get((req, res) => {
+  (0, _user.getOtherProfile)(req, res);
 }); // edit profile
 
 userRouter.route('/profile/edit').put(_auth.protect, _files.upload.single('avatar'), (req, res) => {

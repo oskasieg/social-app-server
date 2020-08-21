@@ -1,6 +1,6 @@
 import multer from 'multer';
 
-const DIR = './public/avatars';
+const DIR = './public/images';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

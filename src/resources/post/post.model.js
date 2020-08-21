@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const postShema = new mongoose.Schema({
+const postSchema = new mongoose.Schema({
   authorLogin: {
     type: String,
     required: true,
@@ -10,13 +10,29 @@ const postShema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true,
+    min: 5,
+    max: 20,
   },
   text: {
     type: String,
+    min: 10,
+    max: 200,
     required: true,
   },
   photos: {
     type: Array,
+  },
+  comments: [
+    {
+      text: String,
+      author: String,
+      avatar: String,
+      createdAt: Date,
+    },
+  ],
+  tags: {
+    type: Array,
+    required: true,
   },
   likes: [
     {
@@ -26,21 +42,12 @@ const postShema = new mongoose.Schema({
     },
   ],
   sumLikes: {
-    type: String,
+    type: Number,
     default: 0,
     required: true,
   },
-  comments: [
-    {
-      text: String,
-      author: String,
-      avatar: String,
-      date: Date,
-    },
-  ],
   createdAt: {
     type: Date,
-    default: new Date(),
     required: true,
   },
   editedAt: {
@@ -48,4 +55,4 @@ const postShema = new mongoose.Schema({
   },
 });
 
-export const Post = mongoose.model('post', postShema);
+export const Post = mongoose.model('post', postSchema);

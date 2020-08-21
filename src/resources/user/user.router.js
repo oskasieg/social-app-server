@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { protect } from '../../utils/auth';
-import { signUp, signIn, getProfile, editProfile } from './user.controllers';
+import { signUp, signIn, getProfile, editProfile, getOtherProfile } from './user.controllers';
 import { upload } from '../../utils/files';
 
 // /user
@@ -24,6 +24,11 @@ userRouter.route('/').put((req, res) => {
 // get profile
 userRouter.route('/profile').put(protect, (req, res) => {
   getProfile(req, res);
+});
+
+// get other profile
+userRouter.route('/profile/:login').get((req, res) => {
+  getOtherProfile(req, res);
 });
 
 // edit profile

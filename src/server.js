@@ -24,6 +24,7 @@ app.use('/post', postRouter);
 app.use('/user', userRouter);
 app.use('/interests', interestRouter);
 
+app.use(express.static(`${__dirname}/../public/images`));
 app.use(express.static(`${__dirname}/../public/avatars`));
 
 const start = async () => {

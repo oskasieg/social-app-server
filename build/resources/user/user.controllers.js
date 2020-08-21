@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateNumberOfPosts = exports.updateFollowers = exports.updateLikes = exports.editProfile = exports.getProfile = exports.signIn = exports.signUp = void 0;
+exports.updateNumberOfPosts = exports.updateFollowers = exports.updateLikes = exports.editProfile = exports.getOtherProfile = exports.getProfile = exports.signIn = exports.signUp = void 0;
 
 var _user = require("./user.model");
 
@@ -117,6 +117,43 @@ const getProfile = async (req, res) => {
 
 exports.getProfile = getProfile;
 
+const getOtherProfile = async (req, res) => {
+  const login = req.params.login.replace('+', ' ');
+
+  try {
+    const user = await _user.User.findOne({
+      login
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User isn't exist!"
+      });
+    }
+
+    return res.status(200).json({
+      login: user.login,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      age: user.age,
+      interests: user.interests,
+      followers: user.followers,
+      avatar: user.avatar,
+      likes: user.likes,
+      numberOfPosts: user.numberOfPosts,
+      createdAt: user.createdAt,
+      lastLogin: user.lastLogin
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      message: 'Error while getting user profile!'
+    });
+  }
+};
+
+exports.getOtherProfile = getOtherProfile;
+
 const editProfile = async (req, res) => {
   if (req.file && req.body.login) {
     try {
@@ -130,7 +167,7 @@ const editProfile = async (req, res) => {
     } catch (e) {
       console.error(e);
     }
-  } else if (!req.body.login || !req.body.firstName || !req.body.lastName || !req.body.password || !req.body.interests || !req.body.age || !req.body.avatar) {
+  } else if (!req.body.login || !req.body.firstName || !req.body.lastName || !req.body.password || !req.body.interests || !req.body.age) {
     return res.status(400).json({
       message: 'No valid number of keys in req.body!'
     });

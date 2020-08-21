@@ -1,8 +1,9 @@
 import { Post } from './post.model';
+import { User } from '../user/user.model';
 import { sortByDate } from '../../utils/sort';
 
 export const addPost = async (req, res) => {
-  if (!req.body.authorLogin || !req.body.title || !req.body.text) {
+  if (!req.body.authorLogin || !req.body.title || !req.body.text || !req.body.tags) {
     return res.status(400).json({ message: 'No valid number of keys in req.body!' });
   }
 
@@ -12,9 +13,17 @@ export const addPost = async (req, res) => {
       return res.status(400).json({ message: 'Post in the same name exists!' });
     }
 
-    const post = await Post.create(req.body);
+    const photos = [];
+    for (let i = 0; i < req.files.length; i++) {
+      photos.push(`http://localhost:8000/${req.files[i].filename}`);
+    }
 
-    res.status(200).json({ message: 'You have added a new post!' });
+    const post = await Post.create({ ...req.body, photos, createdAt: new Date() });
+
+    const user = await User.findOne({ login: req.body.authorLogin });
+    await user.updateOne({ numberOfPosts: user.numberOfPosts + 1 });
+
+    res.status(200).json({ message: 'You have added a new post!', post });
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: 'Error while adding new post' });
@@ -30,6 +39,7 @@ export const getManyPosts = async (req, res) => {
     const posts = await Post.find();
 
     sortByDate(posts, 'dec');
+    posts.forEach((post) => sortByDate(post.comments, 'dec'));
 
     const reducedPosts = posts.slice(0, req.body.numberOfPosts);
 
@@ -37,6 +47,30 @@ export const getManyPosts = async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: 'Error while getting many posts!' });
+  }
+};
+
+export const getUsersPosts = async (req, res) => {
+  if (!req.params.login) {
+    return res.status(400).json({ message: 'No login in req params!' });
+  }
+
+  const login = req.params.login.replace('+', ' ');
+
+  try {
+    const posts = await Post.find({ authorLogin: login });
+
+    sortByDate(posts, 'dec');
+    posts.forEach((post) => sortByDate(post.comments, 'dec'));
+
+    if (!posts) {
+      return res.status(400).json({ message: 'No posts from this user!' });
+    }
+
+    res.status(200).json(posts);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Error while getting users posts!' });
   }
 };
 
@@ -49,7 +83,7 @@ export const getByName = async (req, res) => {
       return res.status(400).json({ message: 'No post with this title!' });
     }
 
-    res.status(200).json({ post });
+    res.status(200).json(post);
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: 'Error while getting post by name!' });
@@ -57,8 +91,51 @@ export const getByName = async (req, res) => {
 };
 
 export const updatePost = async (req, res) => {
-  if (!req.body.authorLogin || !req.body.title || !req.body.text || !req.body.photos) {
+  if (!req.body.authorLogin || !req.body.title || !req.body.text) {
     return res.status(400).json({ message: 'No valid number of keys in req.body!' });
+  }
+
+  const title = req.params.name.replace('+', ' ');
+
+  const photos = [];
+  if (req.files)
+    for (let i = 0; i < req.files.length; i++) {
+      photos.push(`http://localhost:8000/${req.files[i].filename}`);
+    }
+
+  try {
+    const post = await Post.findOne({ title });
+    if (!post) {
+      return res.status(400).json({ message: 'No post with this title!' });
+    }
+
+    let sumLikes = 0;
+    if (req.body.likes)
+      req.body.likes.forEach((like) => {
+        if (like.kind === 'plus') sumLikes++;
+        if (like.kind === 'minus') sumLikes--;
+      });
+
+    await post.updateOne(
+      {
+        ...req.body,
+        editedAt: new Date(),
+        sumLikes: photos.length > 0 ? post.sumLikes : sumLikes,
+        photos: photos.length > 0 ? photos : post.photos,
+      },
+      { new: false }
+    );
+
+    res.status(200).json(req.body);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: 'Error while editing a post!' });
+  }
+};
+
+export const removePost = async (req, res) => {
+  if (!req.params.name) {
+    return res.status(400).json({ message: 'No post name name in req.params!' });
   }
 
   const title = req.params.name.replace('+', ' ');
@@ -69,11 +146,14 @@ export const updatePost = async (req, res) => {
       return res.status(400).json({ message: 'No post with this title!' });
     }
 
-    await post.updateOne({ ...req.body, editedAt: new Date() }, { new: false });
+    await Post.deleteOne(post);
 
-    res.status(200).json({ post: req.body });
+    const user = await User.findOne({ login: req.body.authorLogin });
+    await user.updateOne({ numberOfPosts: user.numberOfPosts - 1 });
+
+    return res.status(200).json({ message: `Post with title '${title}' was deleted.` });
   } catch (e) {
     console.error(e);
-    res.status(500).json({ message: 'Error while editing a post!' });
+    return res.status(500).json({ message: 'Error while deleting post!' });
   }
 };

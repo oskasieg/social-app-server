@@ -9,7 +9,7 @@ var _multer = _interopRequireDefault(require("multer"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const DIR = './public/avatars';
+const DIR = './public/images';
 
 const storage = _multer.default.diskStorage({
   destination: (req, file, cb) => {
