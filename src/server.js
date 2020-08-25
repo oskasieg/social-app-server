@@ -31,7 +31,7 @@ const start = async () => {
   try {
     await connect();
     app.listen(config.port, () => {
-      console.log(`Server is running on: ${config.port}.\n`);
+      console.log(`Server is running. Port: ${config.port}.\n`);
     });
   } catch (e) {
     console.error(e);
