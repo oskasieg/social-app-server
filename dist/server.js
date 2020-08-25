@@ -43,7 +43,7 @@ const start = async () => {
   try {
     await (0, _db.default)();
     app.listen(_config.default.port, () => {
-      console.log(`Server is running on: ${_config.default.port}.\n`);
+      console.log(`Server is running. Port: ${_config.default.port}.\n`);
     });
   } catch (e) {
     console.error(e);
