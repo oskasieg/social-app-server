@@ -139,7 +139,6 @@ export const removePost = async (req, res) => {
   }
 
   const title = req.params.name.replace('+', ' ');
-
   try {
     const post = await Post.findOne({ title });
     if (!post) {

@@ -4,9 +4,9 @@
   "description": "Server for my blog app.",
   "main": "index.js",
   "scripts": {
-    "build": "babel src --out-dir dist",
-    "start": "npm run build && node dist/index.js",
-    "restart": "rimraf dist && npm run start",
+    "build": "babel src --out-dir build",
+    "start": "npm run build && node build/index.js",
+    "restart": "rimraf build && npm run start",
     "dev": "nodemon --exec npm run restart"
   },
   "author": "Krzysztof Sieg",

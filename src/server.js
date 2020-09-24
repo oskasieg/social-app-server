@@ -10,6 +10,7 @@ import connect from './utils/db';
 import postRouter from './resources/post/post.router';
 import userRouter from './resources/user/user.router';
 import interestRouter from './resources/interest/interest.router';
+import { checkInterests } from './resources/interest/interest.controllers';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(express.static(`${__dirname}/../public/avatars`));
 
 const start = async () => {
   try {
+    checkInterests();
     await connect();
     app.listen(config.port, () => {
       console.log(`Server is running. Port: ${config.port}.\n`);

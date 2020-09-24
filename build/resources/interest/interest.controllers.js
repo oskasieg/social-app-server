@@ -3,9 +3,38 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.getInterests = void 0;
+exports.getInterests = exports.checkInterests = void 0;
 
 var _interest = require("./interest.model");
+
+const checkInterests = async () => {
+  try {
+    const exist = await _interest.Interest.find();
+
+    if (exist.length === 0) {
+      const interests = [{
+        name: 'Football'
+      }, {
+        name: 'Travel'
+      }, {
+        name: 'Cook'
+      }, {
+        name: 'Games'
+      }, {
+        name: 'IT'
+      }, {
+        name: 'Science'
+      }, {
+        name: 'Music'
+      }];
+      await _interest.Interest.insertMany(interests);
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
+
+exports.checkInterests = checkInterests;
 
 const getInterests = async (req, res) => {
   try {

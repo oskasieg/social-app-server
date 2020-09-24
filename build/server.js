@@ -23,6 +23,8 @@ var _user = _interopRequireDefault(require("./resources/user/user.router"));
 
 var _interest = _interopRequireDefault(require("./resources/interest/interest.router"));
 
+var _interest2 = require("./resources/interest/interest.controllers");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const app = (0, _express.default)();
@@ -41,9 +43,10 @@ app.use(_express.default.static(`${__dirname}/../public/avatars`));
 
 const start = async () => {
   try {
+    (0, _interest2.checkInterests)();
     await (0, _db.default)();
     app.listen(_config.default.port, () => {
-      console.log(`Server is running on: ${_config.default.port}.\n`);
+      console.log(`Server is running. Port: ${_config.default.port}.\n`);
     });
   } catch (e) {
     console.error(e);
